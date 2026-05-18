@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lufian Blog - اكتب واكسب بـ Pi</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{--pi-purple:#6c35de;--pi-dark:#4a1fa8;--pi-light:#9b6ef3;--pi-gold:#f5a623;--pi-green:#27ae60;--pi-orange:#e67e22;--bg:#0c0a14;--card:#161224;--card2:#1e1a2e;--text:#f0eaff;--muted:#8a7faa;--border:#2a2244;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    nav{background:var(--card);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+    .nav-logo{font-size:1.3rem;font-weight:900;color:var(--pi-orange);display:flex;align-items:center;gap:8px;}
+    .btn{background:var(--pi-purple);color:#fff;border:none;padding:8px 18px;border-radius:25px;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;}
+    .btn-orange{background:var(--pi-orange);color:#fff;border:none;padding:8px 18px;border-radius:25px;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;}
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#1a0a2e,var(--bg));padding:40px 20px;text-align:center;}
+    .hero h1{font-size:2rem;font-weight:900;margin-bottom:8px;}
+    .hero h1 span{color:var(--pi-orange);}
+    .hero p{color:var(--muted);margin-bottom:20px;}
+    /* TABS */
+    .tabs{display:flex;border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;}
+    .tab{padding:14px 20px;cursor:pointer;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;font-size:.9rem;}
+    .tab.active{color:var(--pi-orange);border-bottom-color:var(--pi-orange);}
+    .section{padding:20px;max-width:1100px;margin:0 auto;}
+    /* FEATURED */
+    .featured-post{background:linear-gradient(135deg,var(--pi-dark),#1a0a2e);border:1px solid var(--border);border-radius:20px;padding:30px;margin-bottom:24px;position:relative;overflow:hidden;}
+    .featured-post::before{content:'';position:absolute;top:-50px;left:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(108,53,222,.3),transparent);border-radius:50%;}
+    .featured-label{background:var(--pi-orange);color:#fff;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:700;display:inline-block;margin-bottom:12px;}
+    .featured-title{font-size:1.5rem;font-weight:900;margin-bottom:10px;line-height:1.4;}
+    .featured-excerpt{color:var(--muted);line-height:1.7;margin-bottom:16px;}
+    .featured-meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+    .author-chip{display:flex;align-items:center;gap:8px;}
+    .author-avatar{width:36px;height:36px;border-radius:50%;background:var(--pi-purple);display:flex;align-items:center;justify-content:center;font-size:1rem;}
+    .author-name{font-weight:700;font-size:.9rem;}
+    .post-stats{display:flex;gap:12px;color:var(--muted);font-size:.85rem;}
+    /* LAYOUT */
+    .blog-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+    /* POST CARDS */
+    .post-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;transition:.2s;cursor:pointer;}
+    .post-card:hover{border-color:var(--pi-orange);}
+    .post-cat{font-size:.75rem;color:var(--pi-orange);font-weight:700;margin-bottom:6px;text-transform:uppercase;}
+    .post-title{font-size:1.05rem;font-weight:700;margin-bottom:8px;line-height:1.4;}
+    .post-excerpt{color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:12px;}
+    .post-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+    .post-author{display:flex;align-items:center;gap:8px;font-size:.85rem;}
+    .post-author-avatar{width:28px;height:28px;border-radius:50%;background:var(--pi-purple);display:flex;align-items:center;justify-content:center;font-size:.8rem;}
+    .post-meta{display:flex;gap:10px;color:var(--muted);font-size:.8rem;}
+    .tip-btn{background:var(--pi-gold);color:#000;border:none;padding:6px 14px;border-radius:20px;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;font-size:.8rem;}
+    /* SIDEBAR */
+    .sidebar-widget{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;}
+    .widget-title{font-weight:700;margin-bottom:12px;font-size:.95rem;color:var(--pi-orange);}
+    .trending-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+    .trending-item:last-child{border:none;}
+    .trending-num{font-size:1.2rem;font-weight:900;color:var(--border);min-width:24px;}
+    .trending-title{font-size:.88rem;font-weight:600;line-height:1.4;}
+    .trending-views{font-size:.75rem;color:var(--muted);}
+    .top-writer{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+    .top-writer:last-child{border:none;}
+    .writer-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pi-dark),var(--pi-orange));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+    .writer-info{flex:1;}
+    .writer-name{font-weight:700;font-size:.9rem;}
+    .writer-earned{color:var(--pi-gold);font-size:.8rem;}
+    .follow-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:15px;font-family:'Cairo',sans-serif;font-size:.78rem;cursor:pointer;}
+    /* WRITE */
+    .write-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:750px;margin:0 auto;}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-weight:600;margin-bottom:6px;color:var(--muted);font-size:.9rem;}
+    .form-group input,.form-group textarea,.form-group select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.95rem;outline:none;}
+    .form-group textarea{height:200px;resize:vertical;line-height:1.7;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .editor-toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+    .tool-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.85rem;}
+    /* TIP MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--card);border-radius:20px;width:90%;max-width:380px;padding:24px;text-align:center;}
+    .tip-amounts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0;}
+    .tip-amount{background:var(--card2);border:2px solid var(--border);color:var(--text);padding:10px 20px;border-radius:12px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:1rem;transition:.2s;}
+    .tip-amount.selected{border-color:var(--pi-gold);color:var(--pi-gold);}
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--pi-green);color:#fff;padding:12px 24px;border-radius:30px;font-weight:700;z-index:999;display:none;}
+    @media(max-width:768px){.blog-layout{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>✍️</span> Lufian Blog</div>
+  <div style="display:flex;gap:10px;">
+    <button class="btn-orange" onclick="switchTab('write',null)">+ اكتب مقالاً</button>
+    <button class="btn" onclick="loginWithPi()">دخول بـ Pi</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>اكتب واكسب مع <span>Lufian</span> ✍️</h1>
+  <p>شارك أفكارك واحصل على إكراميات Pi من قرائك</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('feed',this)">المقالات</div>
+  <div class="tab" onclick="switchTab('write',this)">اكتب مقالاً</div>
+  <div class="tab" onclick="switchTab('myarticles',this)">مقالاتي</div>
+</div>
+
+<!-- FEED TAB -->
+<div id="feedTab" class="section">
+  <!-- FEATURED -->
+  <div class="featured-post">
+    <span class="featured-label">⭐ مقال الأسبوع</span>
+    <div class="featured-title">كيف تبني مشروعاً ناجحاً على منظومة Pi الاقتصادية في 2026؟</div>
+    <div class="featured-excerpt">منظومة Pi الاقتصادية تنمو بشكل متسارع، والفرص الذهبية متاحة الآن لمن يتحرك بذكاء. في هذا المقال، نستعرض أفضل الاستراتيجيات لبناء مشروع رقمي مربح...</div>
+    <div class="featured-meta">
+      <div class="author-chip">
+        <div class="author-avatar">👨</div>
+        <div><div class="author-name">خالد المستثمر</div><div style="color:var(--muted);font-size:.78rem;">منذ يومين</div></div>
+      </div>
+      <div class="post-stats">
+        <span>👁️ 12,400</span>
+        <span>❤️ 892</span>
+        <span>💬 156</span>
+        <span>💰 45.5 π إكراميات</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="blog-layout">
+    <div id="postsList"></div>
+    <div>
+      <!-- TRENDING -->
+      <div class="sidebar-widget">
+        <div class="widget-title">🔥 الأكثر قراءة</div>
+        <div id="trendingList"></div>
+      </div>
+      <!-- TOP WRITERS -->
+      <div class="sidebar-widget">
+        <div class="widget-title">🏆 أفضل الكتّاب</div>
+        <div id="writersList"></div>
+      </div>
+      <!-- CATEGORIES -->
+      <div class="sidebar-widget">
+        <div class="widget-title">📂 الفئات</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span style="background:var(--card2);border:1px solid var(--border);padding:5px 12px;border-radius:12px;font-size:.82rem;cursor:pointer;" onclick="showToast('تصفية: Pi')">Pi (234)</span>
+          <span style="background:var(--card2);border:1px solid var(--border);padding:5px 12px;border-radius:12px;font-size:.82rem;cursor:pointer;" onclick="showToast('تصفية: تقنية')">تقنية (189)</span>
+          <span style="background:var(--card2);border:1px solid var(--border);padding:5px 12px;border-radius:12px;font-size:.82rem;cursor:pointer;" onclick="showToast('تصفية: أعمال')">أعمال (145)</span>
+          <span style="background:var(--card2);border:1px solid var(--border);padding:5px 12px;border-radius:12px;font-size:.82rem;cursor:pointer;" onclick="showToast('تصفية: استثمار')">استثمار (98)</span>
+          <span style="background:var(--card2);border:1px solid var(--border);padding:5px 12px;border-radius:12px;font-size:.82rem;cursor:pointer;" onclick="showToast('تصفية: تطوير')">تطوير (76)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WRITE TAB -->
+<div id="writeTab" class="section" style="display:none;">
+  <div class="write-form">
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:6px;">✍️ اكتب مقالك</div>
+    <div style="color:var(--muted);font-size:.9rem;margin-bottom:20px;">شارك معرفتك واكسب 70% من الإكراميات التي يرسلها قراؤك</div>
+    <div class="form-group"><label>عنوان المقال</label><input type="text" id="aTitle" placeholder="اكتب عنواناً جذاباً..." /></div>
+    <div class="form-row">
+      <div class="form-group"><label>الفئة</label><select id="aCat"><option>Pi</option><option>تقنية</option><option>أعمال</option><option>استثمار</option><option>تطوير</option></select></div>
+      <div class="form-group"><label>وقت القراءة (دقائق)</label><input type="number" id="aTime" placeholder="5" /></div>
+    </div>
+    <div class="form-group">
+      <label>محتوى المقال</label>
+      <div class="editor-toolbar">
+        <button class="tool-btn" onclick="insertFormat('**','**')"><b>B</b></button>
+        <button class="tool-btn" onclick="insertFormat('*','*')"><i>I</i></button>
+        <button class="tool-btn" onclick="insertFormat('## ','')">H2</button>
+        <button class="tool-btn" onclick="insertFormat('- ','')">قائمة</button>
+        <button class="tool-btn" onclick="insertFormat('> ','')">اقتباس</button>
+      </div>
+      <textarea id="aContent" placeholder="اكتب مقالك هنا... يمكنك استخدام Markdown للتنسيق"></textarea>
+    </div>
+    <button class="btn-orange" style="width:100%;padding:13px;font-size:1rem;" onclick="publishArticle()">🚀 نشر المقال</button>
+  </div>
+</div>
+
+<!-- MY ARTICLES TAB -->
+<div id="myarticlesTab" class="section" style="display:none;">
+  <div style="text-align:center;padding:40px;color:var(--muted);">
+    <div style="font-size:3rem;margin-bottom:10px;">📝</div>
+    <div>سجّل دخولك لعرض مقالاتك وإيراداتك</div>
+    <button class="btn" style="margin-top:16px;" onclick="loginWithPi()">دخول بـ Pi</button>
+  </div>
+</div>
+
+<!-- TIP MODAL -->
+<div class="modal-overlay" id="tipModal">
+  <div class="modal">
+    <div style="font-size:2rem;margin-bottom:8px;">💰</div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px;">أرسل إكرامية للكاتب</div>
+    <div style="color:var(--muted);font-size:.9rem;margin-bottom:4px;" id="tipAuthor">للكاتب: —</div>
+    <div class="tip-amounts">
+      <div class="tip-amount" onclick="selectTip(this,0.5)">0.5 π</div>
+      <div class="tip-amount selected" onclick="selectTip(this,1)">1 π</div>
+      <div class="tip-amount" onclick="selectTip(this,2)">2 π</div>
+      <div class="tip-amount" onclick="selectTip(this,5)">5 π</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button style="flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:12px;cursor:pointer;font-family:Cairo,sans-serif;" onclick="closeTipModal()">إلغاء</button>
+      <button style="flex:1;background:var(--pi-gold);color:#000;border:none;padding:12px;border-radius:12px;font-family:Cairo,sans-serif;font-weight:700;cursor:pointer;" onclick="sendTip()">إرسال 💰</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  Pi.init({ version: "2.0", sandbox: true });
+  let selectedTipAmount = 1;
+  let currentTipAuthor = '';
+
+  const posts = [
+    {id:1,cat:"Pi",title:"دليل المبتدئين: كيف تستثمر في نطاقات Pi؟",excerpt:"النطاقات في منظومة Pi هي عناوين رقمية فريدة يمكن امتلاكها والربح منها. إليك كل ما تحتاج معرفته...",author:"أحمد Pi",avatar:"👨",date:"منذ 3 ساعات",views:"4,230",likes:"312",tips:"8.5 π"},
+    {id:2,cat:"تقنية",title:"مستقبل تطبيقات Pi SDK في 2026 وما بعدها",excerpt:"Pi SDK يفتح آفاقاً جديدة لبناء تطبيقات لامركزية. نستعرض أبرز الميزات الجديدة والتوقعات المستقبلية...",author:"سارة التقنية",avatar:"👩",date:"أمس",views:"7,890",likes:"567",tips:"22 π"},
+    {id:3,cat:"أعمال",title:"10 أفكار مشاريع مربحة على منصة Pi",excerpt:"من التوصيل إلى التعليم إلى الترفيه، هناك فرص لا حصر لها في منظومة Pi الاقتصادية المتنامية...",author:"خالد الأعمال",avatar:"🧑",date:"منذ يومين",views:"15,400",likes:"1,203",tips:"45 π"},
+    {id:4,cat:"استثمار",title:"كيف حققت 500 Pi خلال شهر واحد من التطبيقات",excerpt:"تجربتي الشخصية في بناء ثلاثة تطبيقات على منصة Pi وكيف بدأت تدر دخلاً حقيقياً...",author:"محمد المستثمر",avatar:"👨‍💼",date:"منذ 3 أيام",views:"22,100",likes:"1,890",tips:"78 π"},
+  ];
+
+  const trending = [
+    {title:"دليل المطالبة بنطاقات Pi 2026",views:"45,200"},
+    {title:"أفضل 5 تطبيقات Pi للربح",views:"32,100"},
+    {title:"مستقبل عملة Pi في 2027",views:"28,900"},
+    {title:"كيف تبني متجراً على Pi",views:"19,400"},
+    {title:"شرح Pi SDK للمبتدئين",views:"15,600"},
+  ];
+
+  const writers = [
+    {name:"محمد المستثمر",avatar:"👨‍💼",earned:"78 π"},
+    {name:"خالد الأعمال",avatar:"🧑",earned:"45 π"},
+    {name:"سارة التقنية",avatar:"👩",earned:"22 π"},
+    {name:"أحمد Pi",avatar:"👨",earned:"8.5 π"},
+  ];
+
+  function renderPosts() {
+    document.getElementById('postsList').innerHTML = posts.map(p => `
+      <div class="post-card">
+        <div class="post-cat">${p.cat}</div>
+        <div class="post-title">${p.title}</div>
+        <div class="post-excerpt">${p.excerpt}</div>
+        <div class="post-footer">
+          <div class="post-author">
+            <div class="post-author-avatar">${p.avatar}</div>
+            <div><div style="font-weight:700;font-size:.85rem;">${p.author}</div><div style="color:var(--muted);font-size:.75rem;">${p.date}</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="post-meta"><span>👁️ ${p.views}</span><span>❤️ ${p.likes}</span><span>💰 ${p.tips}</span></div>
+            <button class="tip-btn" onclick="openTip('${p.author}')">أرسل إكرامية 💰</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderTrending() {
+    document.getElementById('trendingList').innerHTML = trending.map((t, i) => `
+      <div class="trending-item" onclick="showToast('📖 فتح: ${t.title}')">
+        <div class="trending-num">${i+1}</div>
+        <div><div class="trending-title">${t.title}</div><div class="trending-views">👁️ ${t.views}</div></div>
+      </div>
+    `).join('');
+  }
+
+  function renderWriters() {
+    document.getElementById('writersList').innerHTML = writers.map(w => `
+      <div class="top-writer">
+        <div class="writer-avatar">${w.avatar}</div>
+        <div class="writer-info"><div class="writer-name">${w.name}</div><div class="writer-earned">💰 ${w.earned} هذا الشهر</div></div>
+        <button class="follow-btn" onclick="showToast('✓ تابعت ${w.name}')">تابع</button>
+      </div>
+    `).join('');
+  }
+
+  function openTip(author) {
+    currentTipAuthor = author;
+    document.getElementById('tipAuthor').textContent = 'للكاتب: ' + author;
+    document.getElementById('tipModal').classList.add('open');
+  }
+
+  function closeTipModal() { document.getElementById('tipModal').classList.remove('open'); }
+
+  function selectTip(el, amount) {
+    document.querySelectorAll('.tip-amount').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTipAmount = amount;
+  }
+
+  function sendTip() {
+    Pi.createPayment({
+      amount: selectedTipAmount,
+      memo: `Lufian Blog: إكرامية لـ ${currentTipAuthor}`,
+      metadata: { author: currentTipAuthor, type: 'tip' }
+    }, {
+      onReadyForServerApproval: () => { showToast('✓ جاري إرسال الإكرامية...'); closeTipModal(); },
+      onReadyForServerCompletion: () => showToast(`🎉 تم إرسال ${selectedTipAmount} π لـ ${currentTipAuthor}!`),
+      onCancel: () => showToast('❌ تم إلغاء الإكرامية'),
+      onError: (e) => showToast('⚠️ ' + e.message)
+    });
+  }
+
+  function insertFormat(before, after) {
+    const ta = document.getElementById('aContent');
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    const selected = ta.value.substring(start, end);
+    ta.value = ta.value.substring(0, start) + before + selected + after + ta.value.substring(end);
+    ta.focus();
+  }
+
+  function publishArticle() {
+    const title = document.getElementById('aTitle').value;
+    if (!title) { showToast('⚠️ يرجى كتابة عنوان المقال'); return; }
+    showToast('🎉 تم نشر مقالك بنجاح!');
+    document.getElementById('aTitle').value = '';
+    document.getElementById('aContent').value = '';
+    switchTab('feed', null);
+  }
+
+  function switchTab(tab, el) {
+    ['feed','write','myarticles'].forEach(t => {
+      document.getElementById(t+'Tab').style.display = 'none';
+    });
+    document.getElementById(tab+'Tab').style.display = 'block';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+  }
+
+  function loginWithPi() {
+    Pi.authenticate(['username','payments'], (auth) => {
+      showToast('✓ مرحباً ' + auth.user.username);
+    }, (err) => showToast('⚠️ ' + err));
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+
+  renderPosts();
+  renderTrending();
+  renderWriters();
+</script>
+</body>
+</html>
