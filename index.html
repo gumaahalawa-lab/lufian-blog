@@ -209,7 +209,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  Pi.init({ version: "2.0", sandbox: true });
+
   let selectedTipAmount = 1;
   let currentTipAuthor = '';
 
@@ -328,9 +328,9 @@
   }
 
   function loginWithPi() {
-    Pi.authenticate(['username','payments'], (auth) => {
-      showToast('✓ مرحباً ' + auth.user.username);
-    }, (err) => showToast('⚠️ ' + err));
+    Pi.authenticate(['username','payments'], function(){}).then(function(auth){
+      if(auth && auth.user){ showToast('✓ مرحباً ' + auth.user.username); }
+    }).catch(function(e){ showToast('⚠️ ' + e); });
   }
 
   function showToast(msg) {
