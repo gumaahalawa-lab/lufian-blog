@@ -340,14 +340,9 @@
     setTimeout(() => t.style.display = 'none', 3000);
   }
 
-  renderPosts();
+    renderPosts();
   renderTrending();
   renderWriters();
-
-}catch(e){ console.log('Pi SDK error:',e); }
-  }, 500);
-});
-
 // Auto-authenticate on load as required by Pi App Studio
 window.addEventListener('load', function(){
   try{
